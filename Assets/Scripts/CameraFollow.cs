@@ -9,11 +9,12 @@ public class CameraFollow : MonoBehaviour {
     public float distancetoplayer;
 	// Use this for initialization
 	void Start () {
-        distancetoplayer = Vector3.Distance(player.transform.position, transform.position);
-        dirtolook = (player.transform.position - transform.position).normalized;
+        //distancetoplayer = Vector3.Distance(player.transform.position, transform.position);
+        //dirtolook = (player.transform.position - transform.position).normalized;
 	}
 
 	void Update () {
-        transform.position = Vector3.Lerp(transform.position, player.transform.position - dirtolook * distancetoplayer, 0.5f);
-	}
+        transform.position = player.transform.position - player.transform.forward * 15 + new Vector3(0,20,0);
+        transform.forward = (player.transform.position - transform.position).normalized;
+    }
 }

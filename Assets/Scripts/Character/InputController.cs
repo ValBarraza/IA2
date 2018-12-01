@@ -13,13 +13,18 @@ public class InputController : MonoBehaviour {
     void Update()
     {
         if (Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.S)
-          || Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.D))
+          || Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.D)
+          || Input.GetKey(KeyCode.Q) || Input.GetKey(KeyCode.E))
         {
             OnInput(InputF.onMove);
         }
         if (Input.GetKeyDown(KeyCode.Space))
         {
             OnInput(InputF.onShoot);
+        }
+        if (Input.GetKeyDown(KeyCode.T))
+        {
+            OnInput(InputF.onDeployT);
         }
         if ( !Input.anyKey ) OnInput(InputF.offMove);
     }
@@ -28,6 +33,8 @@ public enum InputF // eventos para los estados ( si fuera un jugador usaria inpu
 {
     onMove,
     onShoot,
+    onDeployT,
     offMove,
-    offShoot
+    offShoot,
+    offDeployT
 }

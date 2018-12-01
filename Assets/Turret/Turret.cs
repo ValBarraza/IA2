@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System.Linq;
 
 public class Turret : Entity {
 
@@ -24,11 +25,15 @@ public class Turret : Entity {
     void Update()
     {
         _shoottimer += Time.deltaTime;
-        turretCannon.transform.forward = (Target.transform.position - turretCannon.transform.position).normalized;
-        if (_shoottimer > ShootCooldown && Vector3.Distance(Target.transform.position, turretCannon.transform.position) < 8f)
+        GetTarget();
+        if (Target)
         {
-            _shoottimer = 0;
-            Shoot();
+            turretCannon.transform.forward = (Target.transform.position - turretCannon.transform.position).normalized;
+            if (_shoottimer > ShootCooldown && Vector3.Distance(Target.transform.position, turretCannon.transform.position) < 8f)
+            {
+                _shoottimer = 0;
+                Shoot();
+            }
         }
     }
     void Shoot()
@@ -38,5 +43,18 @@ public class Turret : Entity {
         bullet.transform.forward = transform.forward;
         bullet.GetComponent<Misil>().owner = gameObject;
         bullet.GetComponent<Misil>().Target = Target;
+    }
+    void GetTarget()
+    {
+        var postargets = new List<Collider>();
+        foreach (var postarget in Physics.OverlapSphere(transform.position, 10f))
+        {
+            postargets.Add(postarget);
+        }
+        Target = postargets
+            .Where(x => x.GetComponent<Enemy>()) // agarra solo a los enemigos
+            .OrderBy(x => Vector3.Distance(x.gameObject.transform.position, transform.position)) // ordena por distancia
+            .Select(x => x.gameObject)
+            .FirstOrDefault(); // agarra al mas cercano
     }
 }
