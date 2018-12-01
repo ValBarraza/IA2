@@ -46,6 +46,7 @@ public class Enemy : Entity {
 
         // 3 - Seteo de los estados
         patrol.OnEnter += () => {};
+
         attack.OnEnter += () => 
         {
             var postargets = new List<Collider>();
@@ -83,6 +84,7 @@ public class Enemy : Entity {
             }
 			stateMachine.Feed(Event.onPatrol); // al final, independientemente de lo que hizo, vuelve a patrol
 		};
+
         chase.OnEnter += () => {};
         chase.OnUpdate += () =>
         {

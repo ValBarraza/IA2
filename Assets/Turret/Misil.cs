@@ -24,19 +24,19 @@ public class Misil : Entity {
         transform.position = transform.position + transform.forward * speed * Time.deltaTime;
 
         var damagables = new List<Collider>();
-        foreach (var damagable in Physics.OverlapSphere(transform.position, 0.6f)) // obtencion de posibles golpeados
+        foreach (var damagable in Physics.OverlapSphere(transform.position, 0.6f)) // agarra todo en un cierto rango
         {
-            if (damagable != owner.gameObject && damagable.GetComponent<Entity>())
-                damagables.Add(damagable);
+            if (damagable != owner.gameObject && damagable.GetComponent<Entity>()) // filtra para que sean Entities y no sea su torreta ( owner )
+                damagables.Add(damagable); // si paso los filtros lo agrega a la lista
         }
-        if (damagables.Count > 1)
+        if (damagables.Count > 1) // si en ese area existe otro objeto aparte de si mismo, o sea el count de Damagables es 2 o +
         {
             for (int i = 0; i < damagables.Count; i++)
             {
-                damagables[i].GetComponent<Entity>().life -= 2;
+                damagables[i].GetComponent<Entity>().life -= 2; // explota y saca vida
             }
-            Destroy(gameObject);
+            Destroy(gameObject); // luego se destruye
         }
-        if (life <= 0) Destroy(gameObject);
+        if (life <= 0) Destroy(gameObject); // y tambien se destruye si algo le saco vida
     }
 }
