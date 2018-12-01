@@ -5,4 +5,5 @@ using UnityEngine;
 public class Entity : MonoBehaviour
 {
     public float life;
+    public float speed = 5;
 }

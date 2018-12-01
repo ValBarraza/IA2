@@ -10,7 +10,7 @@ public class Enemy : Entity {
 
 	Vector3 _direction = Vector3.zero;
 	float _timeOfPrediction = 4;
-	public float speed;
+	// float speed;
     public float rotationSpeed;
     public float ShootCooldown;
     float shoottimer;
@@ -35,6 +35,7 @@ public class Enemy : Entity {
 
         // 2 - Seteo de las transiciones
         patrol.AddTransition(Event.onAttack, attack);
+        patrol.AddTransition(Event.onChase, chase);
 
         attack.AddTransition(Event.onPatrol, patrol);
         attack.AddTransition(Event.onChase, chase);
@@ -85,15 +86,40 @@ public class Enemy : Entity {
 			stateMachine.Feed(Event.onPatrol); // al final, independientemente de lo que hizo, vuelve a patrol
 		};
 
-        chase.OnEnter += () => {};
+        chase.OnEnter += () => {
+            var postargets = new List<Collider>();
+            foreach (var postarget in Physics.OverlapSphere(transform.position, 10f))
+            {
+                postargets.Add(postarget);
+            }
+            var targets = postargets
+                .Where(x =>
+                            x.GetComponent<Turret>()
+                            || x.GetComponent<Character>())
+                .OrderBy(x =>
+                            Vector3.Distance(x.gameObject.transform.position, transform.position))
+                .Select(x =>
+                            x.gameObject)
+                .ToList();
+
+            target = targets
+                .Where(x =>
+                            x.GetComponent<Entity>().life < x.GetComponent<Entity>().life / 2)
+                .FirstOrDefault();
+
+            if (!target && targets.Count > 0)
+                    target = targets[Random.Range(0, targets.Count)].gameObject;
+        };
         chase.OnUpdate += () =>
-        {
-            /*
-				if(target) _direction = target.transform.position + target.transform.forward * target.speed * _timeOfPrediction;
-				else if(!target) stateMachine.Feed(Event.onPatrol);
-				transform.forward = Vector3.Lerp(transform.forward, _direction - transform.position, rotationSpeed * Time.deltaTime);
-				transform.position += transform.forward * speed * Time.deltaTime;
-			*/
+        {            
+            if (target)
+            {
+                Debug.Log("persigo");
+                _direction = target.transform.position + target.transform.forward * target.GetComponent<Entity>().speed * _timeOfPrediction;
+                transform.forward = Vector3.Lerp(transform.forward, _direction - transform.position, rotationSpeed * Time.deltaTime);
+                transform.position += transform.forward * 5 * Time.deltaTime;
+            }
+            else stateMachine.Feed(Event.onPatrol);
         };
         flee.OnEnter += () => {};
 		flee.OnUpdate += () => {

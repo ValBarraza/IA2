@@ -21,8 +21,8 @@ public class EventController : MonoBehaviour {
             targets.Add(postarget);
         }
 
-        if ( targets.Count > 0 ) OnEvent(Event.onAttack);
-        else if (Vector3.Distance(transform.position, triggertest.transform.position) < 3) OnEvent(Event.onChase);
+        if (targets.Count > 0 && Vector3.Distance(transform.position, triggertest.transform.position) <= 5) OnEvent(Event.onAttack);
+        else if (Vector3.Distance(transform.position, triggertest.transform.position) <= 10) { OnEvent(Event.onChase); Debug.Log("chase"); }
         else if (Vector3.Distance(transform.position, triggertest.transform.position) < 5) OnEvent(Event.onFlee);
         else OnEvent(Event.onPatrol);
     }
