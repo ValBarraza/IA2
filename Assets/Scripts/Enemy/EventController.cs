@@ -10,9 +10,18 @@ public class EventController : MonoBehaviour {
 
     public event Action<Event> OnEvent = delegate { };
     public GameObject triggertest;
+    public List<Collider> targets = new List<Collider>();
 
     void Update () {
-        if (Vector3.Distance(transform.position, triggertest.transform.position) < 1) OnEvent(Event.onAttack);
+
+        targets.Clear();
+        targets = new List<Collider>();
+        foreach (var postarget in Physics.OverlapSphere(transform.position, 10f)) 
+        {
+            targets.Add(postarget);
+        }
+
+        if ( targets.Count > 0 ) OnEvent(Event.onAttack);
         else if (Vector3.Distance(transform.position, triggertest.transform.position) < 3) OnEvent(Event.onChase);
         else if (Vector3.Distance(transform.position, triggertest.transform.position) < 5) OnEvent(Event.onFlee);
         else OnEvent(Event.onPatrol);

@@ -1,16 +1,22 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System.Linq;
 
-public class Enemy : MonoBehaviour {
+public class Enemy : Entity {
 	
 	public GameObject target;
 	public GameObject bulletPrefab;
 
-	Vector3 _direction = Vector3.Zero;
+	Vector3 _direction = Vector3.zero;
 	float _timeOfPrediction = 4;
 	public float speed;
-	public float rotationSpeed;	
+    public float rotationSpeed;
+    public float ShootCooldown;
+    float shoottimer;
+
+    //public List<GameObject> targets = new List<GameObject>();
+    //public List<Collider> postargets = new List<Collider>();
 
 	SphereCollider _collider;
 
@@ -19,7 +25,7 @@ public class Enemy : MonoBehaviour {
 
     private void Start()
     {
-		_collider = GetComponent<ShpereCollider>();
+		//_collider = GetComponent<ShpereCollider>();
 		
         // 1 - Creacion de los estados
         var patrol = new State<Event>("PATROL");
@@ -40,25 +46,53 @@ public class Enemy : MonoBehaviour {
 
         // 3 - Seteo de los estados
         patrol.OnEnter += () => {};
-        attack.OnEnter += () => {};
-		attack.OnUpdate += () => {
-			/*if(target){
-				GameObject bullet = GameObject.Instantiate(bulletPrefab);
-				bullet.transform.position = this.transform.position;
-				bullet.transform.forward = this.transform.forward;
-			}
-			else stateMachine.Feed(Event.onPatrol);
-			*/
+        attack.OnEnter += () => 
+        {
+            var postargets = new List<Collider>();
+            foreach (var postarget in Physics.OverlapSphere(transform.position, 10f))
+            {
+                postargets.Add(postarget);
+            }
+            var targets = postargets
+                .Where(x =>
+                            x.GetComponent<Misil>() // si es un misil
+                            || x.GetComponent<Turret>() // si es una torreta
+                            || x.GetComponent<Character>()) // si es el jugador
+                .OrderBy(x =>
+                            Vector3.Distance(x.gameObject.transform.position, transform.position)) // ordena por distancia
+                .Select(x =>
+                            x.gameObject) // toma los gameobject de los collider
+                .ToList();
+            target = targets
+                .Where(x =>
+                            x.GetComponent<Entity>().life < x.GetComponent<Entity>().life / 2 // si esta en menos de mitad de vida
+                            || x.GetComponent<Entity>().life == 1) // o si tiene 1 de vida ( o sea si es un misil )
+                .FirstOrDefault(); // agarra el mas primero de la lista, o sea el mas cercano.
+
+            if (!target && targets.Count > 0) // si no encontro un target copado, pero aun asi hay objetivos posibles
+                    target = targets[Random.Range(0, targets.Count)].gameObject; // Si no encontro un buen target, elije uno random
+        };
+		attack.OnUpdate += () => 
+        {
+            if (shoottimer > ShootCooldown && target) // si le da el cooldown para disparar y encontro algun target
+            {
+                GameObject bullet = Instantiate(bulletPrefab);
+                bullet.transform.position = transform.position + transform.forward * 1.5f;
+                bullet.transform.forward = transform.forward;
+                shoottimer = 0;
+            }
+			stateMachine.Feed(Event.onPatrol); // al final, independientemente de lo que hizo, vuelve a patrol
 		};
         chase.OnEnter += () => {};
-		chase.OnUpdate += () => {
-			/*
+        chase.OnUpdate += () =>
+        {
+            /*
 				if(target) _direction = target.transform.position + target.transform.forward * target.speed * _timeOfPrediction;
 				else if(!target) stateMachine.Feed(Event.onPatrol);
 				transform.forward = Vector3.Lerp(transform.forward, _direction - transform.position, rotationSpeed * Time.deltaTime);
 				transform.position += transform.forward * speed * Time.deltaTime;
 			*/
-		}
+        };
         flee.OnEnter += () => {};
 		flee.OnUpdate += () => {
 			/*
@@ -75,9 +109,14 @@ public class Enemy : MonoBehaviour {
         stateMachine = new EventFSM<Event>(patrol);
         controller.OnEvent += evento => stateMachine.Feed(evento);
     }
-    private void Update() { stateMachine.Update(); }
+    private void Update()
+    {
+        if (target) transform.forward = (target.transform.position - transform.position).normalized;
+        shoottimer += Time.deltaTime;
+        stateMachine.Update();
+    }
 
-	GameObject SetTarget(){
-		_collider.
-	}
+	//GameObject SetTarget(){
+	//	_collider.
+	//}
 }

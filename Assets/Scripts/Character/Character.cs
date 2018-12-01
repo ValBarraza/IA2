@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Character : MonoBehaviour
+public class Character : Entity
 {
     public float _speed;
     public GameObject _bulletPrefab;
@@ -10,6 +10,10 @@ public class Character : MonoBehaviour
     public InputController controller;
     private EventFSM<InputF> stateMachine;
 
+    private void Awake()
+    {
+        life = 10;
+    }
     private void Start()
     {
         // 1 - Creacion de los estados

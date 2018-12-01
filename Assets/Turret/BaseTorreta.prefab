@@ -22,6 +22,7 @@ GameObject:
   - component: {fileID: 33869379084280144}
   - component: {fileID: 23832713252248274}
   - component: {fileID: 114802065064635686}
+  - component: {fileID: 65583622302822066}
   m_Layer: 0
   m_Name: BaseTorreta
   m_TagString: Untagged
@@ -53,7 +54,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1215854840556896}
   m_LocalRotation: {x: -0.7071068, y: 0, z: -0, w: 0.7071068}
-  m_LocalPosition: {x: 9.05848, y: -1.2, z: 4.526143}
+  m_LocalPosition: {x: 7.82, y: -1.2, z: 11.66}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4980458926170144}
@@ -155,6 +156,18 @@ MeshFilter:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1215854840556896}
   m_Mesh: {fileID: 4300000, guid: 6f9f163ec662cca41a58f38b8f0de5f5, type: 3}
+--- !u!65 &65583622302822066
+BoxCollider:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1215854840556896}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 0.9444914, y: 0.9257237, z: 0.7953478}
+  m_Center: {x: -0.0038576126, y: -0.013046622, z: -0.26714775}
 --- !u!114 &114802065064635686
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -166,6 +179,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d108e16caecdeda40ace9167f966441d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  life: 0
   Target: {fileID: 0}
   turretCannon: {fileID: 1803532024628538}
   missilePrefab: {fileID: 1302632074561516, guid: 797395823b49ac94f99b80dc5fc2a7bd,
