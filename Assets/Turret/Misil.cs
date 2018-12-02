@@ -20,6 +20,8 @@ public class Misil : Entity {
 	
 	// Update is called once per frame
 	void Update () {
+
+        if (life <= 0 || !target) Destroy(gameObject); // y tambien se destruye si algo le saco vida
         transform.forward = (target.transform.position - transform.position).normalized;
         transform.position = transform.position + transform.forward * speed * Time.deltaTime;
 
@@ -37,6 +39,6 @@ public class Misil : Entity {
             }
             Destroy(gameObject); // luego se destruye
         }
-        if (life <= 0 || !target) Destroy(gameObject); // y tambien se destruye si algo le saco vida
+        
     }
 }

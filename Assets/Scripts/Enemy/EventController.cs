@@ -22,7 +22,8 @@ public class EventController : MonoBehaviour {
             if (postarget.GetComponent<Entity>() && !postarget.GetComponent<Enemy>())
             targets.Add(postarget);
         }
-        if (GetComponent<Entity>().life <= GetComponent<Entity>().life / 4) OnEvent(Event.onFlee); 
+        Debug.Log(this.GetComponent<Entity>().life);
+        if (this.GetComponent<Enemy>().life <= 5) { OnEvent(Event.onFlee); Debug.Log("entro a flee"); }
         if (targets.Count > 0)
         {
             Debug.Log("debug1");

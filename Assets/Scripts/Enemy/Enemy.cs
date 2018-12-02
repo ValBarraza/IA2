@@ -25,7 +25,7 @@ public class Enemy : Entity {
 
     void Awake()
     {
-        //life = 10;
+        life = 10;
     }
 
     private void Start()
@@ -41,9 +41,11 @@ public class Enemy : Entity {
         // 2 - Seteo de las transiciones
         patrol.AddTransition(Event.onAttack, attack);
         patrol.AddTransition(Event.onChase, chase);
+        patrol.AddTransition(Event.onFlee, flee);
 
         attack.AddTransition(Event.onPatrol, patrol);
         attack.AddTransition(Event.onChase, chase);
+        attack.AddTransition(Event.onFlee, flee);
 
         chase.AddTransition(Event.onAttack, attack);
         chase.AddTransition(Event.onFlee, flee);
@@ -131,15 +133,11 @@ public class Enemy : Entity {
         };
         flee.OnEnter += () => {};
 		flee.OnUpdate += () => {
-			/*
-				if(hp <= 5){
-					_direction = -(target.transform.position - transform.position);
-					transform.forward = Vector3.Lerp(transform.forward, _direction, rotationSpeed * Time.deltaTime);
-					transform.position += transform.forward * speed * Time.deltaTime;
-				}
-				else stateMachine.Feed(Event.onPatrol);
-			*/	
-		};
+            Debug.Log("Flee");
+            transform.forward = -(target.transform.position - transform.position).normalized;
+            transform.position += transform.forward * 5 * Time.deltaTime;
+            transform.position = new Vector3(transform.position.x, 0, transform.position.z);
+        };
 
         // 4 - Creacion de la FSM y asignacion del controlador de eventos/inputs
         stateMachine = new EventFSM<Event>(patrol);
