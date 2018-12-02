@@ -42,7 +42,7 @@ public class Turret : Entity {
         bullet.transform.position = turretCannon.transform.position + turretCannon.transform.forward * 1.5f;
         bullet.transform.forward = transform.forward;
         bullet.GetComponent<Misil>().owner = gameObject;
-        bullet.GetComponent<Misil>().Target = Target;
+        bullet.GetComponent<Misil>().target = Target;
     }
     void GetTarget()
     {

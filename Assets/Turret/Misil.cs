@@ -5,7 +5,7 @@ using System.Linq;
 
 public class Misil : Entity {
 
-    public GameObject Target;
+    public GameObject target;
     public GameObject owner;
 
     private void Awake()
@@ -20,7 +20,7 @@ public class Misil : Entity {
 	
 	// Update is called once per frame
 	void Update () {
-        transform.forward = (Target.transform.position - transform.position).normalized;
+        transform.forward = (target.transform.position - transform.position).normalized;
         transform.position = transform.position + transform.forward * speed * Time.deltaTime;
 
         var damagables = new List<Collider>();
@@ -37,6 +37,6 @@ public class Misil : Entity {
             }
             Destroy(gameObject); // luego se destruye
         }
-        if (life <= 0) Destroy(gameObject); // y tambien se destruye si algo le saco vida
+        if (life <= 0 || !target) Destroy(gameObject); // y tambien se destruye si algo le saco vida
     }
 }

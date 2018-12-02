@@ -25,7 +25,7 @@ public class Enemy : Entity {
 
     void Awake()
     {
-        life = 10;
+        //life = 10;
     }
 
     private void Start()
@@ -83,6 +83,7 @@ public class Enemy : Entity {
         {
             if (shoottimer > ShootCooldown && target) // si le da el cooldown para disparar y encontro algun target
             {
+                transform.forward = (target.transform.position - transform.position).normalized;
                 GameObject bullet = Instantiate(bulletPrefab);
                 bullet.transform.position = transform.position + transform.forward * 1.5f;
                 bullet.transform.forward = transform.forward;
@@ -121,8 +122,9 @@ public class Enemy : Entity {
             if (target)
             {
                 Debug.Log("persigo");
-                _direction = target.transform.position + target.transform.forward * target.GetComponent<Entity>().speed * _timeOfPrediction;
-                transform.forward = Vector3.Lerp(transform.forward, _direction - transform.position, rotationSpeed * Time.deltaTime);
+                transform.forward = (target.transform.position - transform.position).normalized;
+                //_direction = target.transform.position + target.transform.forward * target.GetComponent<Entity>().speed * _timeOfPrediction;
+                //transform.forward = Vector3.Lerp(transform.forward, _direction - transform.position, rotationSpeed * Time.deltaTime);
                 transform.position += transform.forward * 5 * Time.deltaTime;
             }
             else stateMachine.Feed(Event.onPatrol);
