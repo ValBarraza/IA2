@@ -4,9 +4,10 @@ using UnityEngine;
 using System.Linq;
 
 public class Enemy : Entity {
-	
+
+    public GameManager gamemanager;
 	public GameObject target;
-	public GameObject bulletPrefab;
+    public GameObject bulletPrefab;
 
 	Vector3 _direction = Vector3.zero;
 	float _timeOfPrediction = 4;
@@ -14,9 +15,6 @@ public class Enemy : Entity {
     public float rotationSpeed;
     public float ShootCooldown;
     float shoottimer;
-
-    //public List<GameObject> targets = new List<GameObject>();
-    //public List<Collider> postargets = new List<Collider>();
 
 	SphereCollider _collider;
 
@@ -30,7 +28,6 @@ public class Enemy : Entity {
 
     private void Start()
     {
-		//_collider = GetComponent<ShpereCollider>();
 		
         // 1 - Creacion de los estados
         var patrol = new State<Event>("PATROL");
@@ -49,8 +46,6 @@ public class Enemy : Entity {
 
         chase.AddTransition(Event.onAttack, attack);
         chase.AddTransition(Event.onFlee, flee);
-
-        flee.AddTransition(Event.onChase, chase);
 
         // 3 - Seteo de los estados
         patrol.OnEnter += () => {};
@@ -125,20 +120,37 @@ public class Enemy : Entity {
             {
                 Debug.Log("persigo");
                 transform.forward = (target.transform.position - transform.position).normalized;
-                //_direction = target.transform.position + target.transform.forward * target.GetComponent<Entity>().speed * _timeOfPrediction;
-                //transform.forward = Vector3.Lerp(transform.forward, _direction - transform.position, rotationSpeed * Time.deltaTime);
                 transform.position += transform.forward * 5 * Time.deltaTime;
             }
             else stateMachine.Feed(Event.onPatrol);
         };
-        flee.OnEnter += () => {};
 		flee.OnUpdate += () => {
             Debug.Log("Flee");
-            transform.forward = -(target.transform.position - transform.position).normalized;
-            transform.position += transform.forward * 5 * Time.deltaTime;
-            transform.position = new Vector3(transform.position.x, 0, transform.position.z);
-        };
+            var allthreats2 = gamemanager.players
+                         .Select(x => x.gameObject) // transformo los players en gameobjects
+                         .Concat(gamemanager.players
+                                .SelectMany(x => x.myturrets) // agarro todas las torretas
+                                .Select(x => x.gameObject)) // las transformo en gameobjects y las adhiero a la lista con el concat
+                         .Concat(gamemanager.players
+                                .SelectMany(x => x.myturrets) // agarro todas las torretas
+                                .SelectMany(x => x.mymissiles) // de ahi, agarro todas los misiles
+                                .Select(x => x.gameObject)) // las transformo en gameobjects y las adhiero a la lista con el concat
+                                // hasta aca lo unico que hice fue armar una lista con todos los Character, Turrets y Misiles
+                                // transformados en gameobjects para que me deje meterlos todos en una misma lista
+                         .OrderBy(x => Vector3.Distance(x.transform.position, transform.position)) // los ordeno por distancia
+                         .TakeWhile(x => Vector3.Distance(x.transform.position, transform.position) < 20f); // tomo hasta k esten demasiado lejos
 
+            var pointtoflee = allthreats2
+                         .Aggregate(new Vector3(0, 0, 0), (a, b) => a + b.transform.position) // sumo todos los vectores de los "peligros"
+                         / allthreats2.Count(); // los divido por el count para sacar el punto medio
+
+            var speedtoflee = allthreats2
+                         .Aggregate(0f, (a, b) => a + b.GetComponent<Entity>().life) // sumo todas las Life de los "peligros"
+                         / 2; // lo divido x dos asi es un poquito mas lento y lo puedo alcanzar
+
+            transform.forward = -(pointtoflee - transform.position).normalized; // mi direccion es la opuesta al "PointToFlee"
+            transform.position += transform.forward * speedtoflee * Time.deltaTime; // mi velocidad para escapar es "SpeedToFlee"
+        };
         // 4 - Creacion de la FSM y asignacion del controlador de eventos/inputs
         stateMachine = new EventFSM<Event>(patrol);
         controller.OnEvent += evento => stateMachine.Feed(evento);
@@ -149,8 +161,4 @@ public class Enemy : Entity {
         shoottimer += Time.deltaTime;
         stateMachine.Update();
     }
-
-	//GameObject SetTarget(){
-	//	_collider.
-	//}
 }

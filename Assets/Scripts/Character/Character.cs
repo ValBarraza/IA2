@@ -4,9 +4,11 @@ using UnityEngine;
 
 public class Character : Entity
 {
+    public GameManager gamemanager;
     public float _speed;
     public GameObject _bulletPrefab;
     public GameObject _turretPrefab;
+    public List<Turret> myturrets = new List<Turret>();
     public float turretCooldown;
     public float shootCooldown;
     float turrettimer;
@@ -76,6 +78,7 @@ public class Character : Entity
                 turret.transform.position = transform.position + transform.forward * 1.5f;
                 turret.transform.forward = transform.forward;
                 turret.transform.Rotate(-90, 0, 0);
+                myturrets.Add(turret.GetComponent<Turret>());
                 turrettimer = 0;
             }
             stateMachine.Feed(InputF.offDeployT); // spawnea la bullet y automaticamente le manda la señal a la FSM para k salga del estado

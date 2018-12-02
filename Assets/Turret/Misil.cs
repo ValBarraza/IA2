@@ -6,22 +6,19 @@ using System.Linq;
 public class Misil : Entity {
 
     public GameObject target;
-    public GameObject owner;
+    public Turret owner;
 
     private void Awake()
     {
         life = 1;
         speed = 4.5f;
     }
-    // Use this for initialization
-    void Start () {
-		
-	}
-	
-	// Update is called once per frame
-	void Update () {
 
-        if (life <= 0 || !target) Destroy(gameObject); // y tambien se destruye si algo le saco vida
+    // Update is called once per frame
+    void Update()
+    {
+
+        if (life <= 0 || !target) Die(); // y tambien se destruye si algo le saco vida
         transform.forward = (target.transform.position - transform.position).normalized;
         transform.position = transform.position + transform.forward * speed * Time.deltaTime;
 
@@ -37,8 +34,13 @@ public class Misil : Entity {
             {
                 damagables[i].GetComponent<Entity>().life -= 2; // explota y saca vida
             }
-            Destroy(gameObject); // luego se destruye
+            Die();
         }
-        
+
+    }
+    void Die()
+    {
+        owner.mymissiles.Remove(this);
+        Destroy(gameObject);
     }
 }

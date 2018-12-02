@@ -5,6 +5,8 @@ using System.Linq;
 
 public class Turret : Entity {
 
+    public Character owner;
+    public List<Misil> mymissiles;
     public GameObject Target;
     public GameObject turretCannon;
     public GameObject missilePrefab;
@@ -15,11 +17,6 @@ public class Turret : Entity {
     {
         life = 2;
     }
-
-    // Use this for initialization
-    void Start () {
-		
-	}
 
     // Update is called once per frame
     void Update()
@@ -38,11 +35,12 @@ public class Turret : Entity {
     }
     void Shoot()
     {
-        GameObject bullet = Instantiate(missilePrefab) as GameObject;
-        bullet.transform.position = turretCannon.transform.position + turretCannon.transform.forward * 1.5f;
-        bullet.transform.forward = transform.forward;
-        bullet.GetComponent<Misil>().owner = gameObject;
-        bullet.GetComponent<Misil>().target = Target;
+        GameObject missile = Instantiate(missilePrefab) as GameObject;
+        missile.transform.position = turretCannon.transform.position + turretCannon.transform.forward * 1.5f;
+        missile.transform.forward = transform.forward;
+        missile.GetComponent<Misil>().owner = this;
+        missile.GetComponent<Misil>().target = Target;
+        mymissiles.Add(missile.GetComponent<Misil>());
     }
     void GetTarget()
     {
@@ -56,5 +54,9 @@ public class Turret : Entity {
             .OrderBy(x => Vector3.Distance(x.gameObject.transform.position, transform.position)) // ordena por distancia
             .Select(x => x.gameObject)
             .FirstOrDefault(); // agarra al mas cercano
+    }
+    void Die()
+    {
+        owner.myturrets.Remove(this);
     }
 }

@@ -13,7 +13,7 @@ public class Bullet : MonoBehaviour {
     void Update ()
     {
         autodestroytimer += Time.deltaTime;  // autodestruccion
-        if (autodestroytimer > 5f) Destroy(gameObject); // autodestruccion
+        if (autodestroytimer > 0.5f) Destroy(gameObject); // autodestruccion
 
         transform.position += transform.forward * _speed * Time.deltaTime; // movimiento
 
