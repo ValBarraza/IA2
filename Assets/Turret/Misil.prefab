@@ -96,8 +96,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   life: 1
-  Target: {fileID: 0}
   speed: 4.5
+  Target: {fileID: 0}
+  speedB: 4.5
   owner: {fileID: 0}
 --- !u!136 &136024266801641556
 CapsuleCollider:

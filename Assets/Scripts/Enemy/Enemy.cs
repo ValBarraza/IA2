@@ -23,6 +23,11 @@ public class Enemy : Entity {
     public EventController controller;
     private EventFSM<Event> stateMachine;
 
+    void Awake()
+    {
+        life = 10;
+    }
+
     private void Start()
     {
 		//_collider = GetComponent<ShpereCollider>();
@@ -87,6 +92,7 @@ public class Enemy : Entity {
 		};
 
         chase.OnEnter += () => {
+            Debug.Log("persiguiendo");
             var postargets = new List<Collider>();
             foreach (var postarget in Physics.OverlapSphere(transform.position, 10f))
             {
@@ -139,7 +145,7 @@ public class Enemy : Entity {
     }
     private void Update()
     {
-        if (target) transform.forward = (target.transform.position - transform.position).normalized;
+        if (life <= 0) Destroy(gameObject);
         shoottimer += Time.deltaTime;
         stateMachine.Update();
     }

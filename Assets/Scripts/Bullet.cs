@@ -9,13 +9,8 @@ public class Bullet : MonoBehaviour {
     public float _speed;
     GameObject owner;
 
-	// Use this for initialization
-	void Start () {
-		
-	}
-	
-	// Update is called once per frame
-	void Update ()
+    // Update is called once per frame
+    void Update ()
     {
         autodestroytimer += Time.deltaTime;  // autodestruccion
         if (autodestroytimer > 5f) Destroy(gameObject); // autodestruccion

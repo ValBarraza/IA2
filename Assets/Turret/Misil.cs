@@ -6,12 +6,12 @@ using System.Linq;
 public class Misil : Entity {
 
     public GameObject Target;
-    public float speedB;
     public GameObject owner;
 
     private void Awake()
     {
         life = 1;
+        speed = 4.5f;
     }
     // Use this for initialization
     void Start () {
@@ -21,7 +21,7 @@ public class Misil : Entity {
 	// Update is called once per frame
 	void Update () {
         transform.forward = (Target.transform.position - transform.position).normalized;
-        transform.position = transform.position + transform.forward * speedB * Time.deltaTime;
+        transform.position = transform.position + transform.forward * speed * Time.deltaTime;
 
         var damagables = new List<Collider>();
         foreach (var damagable in Physics.OverlapSphere(transform.position, 0.6f)) // agarra todo en un cierto rango
